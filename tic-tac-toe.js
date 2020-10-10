@@ -1,13 +1,15 @@
 "use strict"
 
-let current_player = "X"
+let current_player = "X" // start with the current player being X
 let game_squares = 0
 let game_state = []
 
 window.onload = function() {
 	var board = document.getElementById("board")
-
 	setupBoard(board)
+
+	// Set listener to new_game button
+	document.querySelector(".btn").addEventListener('click', resetGame)
 }
 
 // Setup board
@@ -47,7 +49,6 @@ function handleSquareClick(click_event) {
 // Update Game State
 function updateGameState() {
 	game_state.push(current_player)
-	console.log(game_state)
 }
 
 // Mouse over event handler
@@ -128,4 +129,17 @@ function winMessage() {
 	var message_element = document.getElementById('status')
 	message_element.classList.add("you-won")
 	message_element.innerHTML = `Congratulations! ${current_player} is the Winner!`
+}
+ 
+function resetGame() {
+  var reset = confirm("Are you sure?");
+  if (reset) {
+  	var squares = document.getElementsByClassName("square")
+		for (var i = 0; i < squares.length; i++) {
+		   squares[i].innerHTML = ""
+		}
+		var message_element = document.getElementById('status')
+		message_element.classList.remove("you-won")
+		message_element.innerHTML = "Move your mouse over a square and click to play an X or an O."
+  } 
 }
