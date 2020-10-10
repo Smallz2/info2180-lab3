@@ -2,7 +2,7 @@
 
 let current_player = "X" // start with the current player being X
 let game_squares = 0
-let game_state = []
+let game_active = true
 
 window.onload = function() {
 	var board = document.getElementById("board")
@@ -26,29 +26,29 @@ function setupBoard(board) {
 }
 
 // Handle square click
-function handleSquareClick(click_event) {
+function handleSquareClick(click_event) {	
 	var clicked_square = click_event.target
+	game_squares = game_squares + 1
+
+	if (!game_active) { // if game not active, return this function
+		return
+	}
 
 	if (current_player == "X") { 
-		clicked_square.classList.add(current_player)
-		clicked_square.innerHTML = current_player
-		game_squares = game_squares + 1
-		updateGameState()
-		checkIfGameWon()
-		current_player = "0"
+		if (clicked_square.innerHTML == "") {
+			clicked_square.classList.add(current_player)
+			clicked_square.innerHTML = current_player
+			checkIfGameWon()
+			current_player = "0"
+		}
 	} else {
-		clicked_square.classList.add(current_player)
-		clicked_square.innerHTML = current_player
-		game_squares = game_squares + 1
-		updateGameState()
-		checkIfGameWon()
-		current_player = "X"
+		if (clicked_square.innerHTML == "") {
+			clicked_square.classList.add(current_player)
+			clicked_square.innerHTML = current_player
+			checkIfGameWon()
+			current_player = "X"
+		}
 	}
-}
-
-// Update Game State
-function updateGameState() {
-	game_state.push(current_player)
 }
 
 // Mouse over event handler
@@ -85,6 +85,7 @@ function checkIfGameWon() {
 
 		if (presentx == 3 || presento == 3 ) {
 			winMessage()
+			return
 		}
 	} // only 3 rows are present
 
@@ -108,6 +109,7 @@ function checkIfGameWon() {
 
 		if (presentx == 3 || presento == 3 ) {
 			winMessage()
+			return
 		}
 	} // only 3 rows are present
 
@@ -116,12 +118,21 @@ function checkIfGameWon() {
 	if ( (document.getElementById(0).innerHTML == "X") && (middle_element == "X") && (document.getElementById(8).innerHTML == "X") || 
 			 (document.getElementById(2).innerHTML == "X") && (middle_element == "X") && (document.getElementById(6).innerHTML == "X") ) {
 		winMessage()
+		return
 	}
 
 	if ( (document.getElementById(0).innerHTML == "0") && (middle_element == "0") && (document.getElementById(8).innerHTML == "0") || 
 		 	 (document.getElementById(2).innerHTML == "0") && (middle_element == "0") && (document.getElementById(6).innerHTML == "0") ) {
 		winMessage()
+		return
 	}
+
+	//handle game draw
+	if (game_squares == 9 && game_active) {
+		var message_element = document.getElementById('status')
+		message_element.innerHTML = "Draw game, hit new game and try again"
+		game_active = false
+	} 
 }
 
 // Add win message
@@ -129,8 +140,10 @@ function winMessage() {
 	var message_element = document.getElementById('status')
 	message_element.classList.add("you-won")
 	message_element.innerHTML = `Congratulations! ${current_player} is the Winner!`
+	game_active = false
 }
  
+// Reset game
 function resetGame() {
   var reset = confirm("Are you sure?");
   if (reset) {
@@ -141,5 +154,8 @@ function resetGame() {
 		var message_element = document.getElementById('status')
 		message_element.classList.remove("you-won")
 		message_element.innerHTML = "Move your mouse over a square and click to play an X or an O."
+
+		game_active = true
+		game_squares = 0
   } 
 }
