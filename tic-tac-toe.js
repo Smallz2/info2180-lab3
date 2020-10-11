@@ -28,25 +28,23 @@ function setupBoard(board) {
 // Handle square click
 function handleSquareClick(click_event) {	
 	var clicked_square = click_event.target
-	game_squares = game_squares + 1
-
-	if (!game_active) { // if game not active, return this function
+	
+	if (!game_active || !clicked_square.innerHTML == "") { // if game not active, return this function
 		return
 	}
 
-	if (current_player == "X") { 
-		if (clicked_square.innerHTML == "") {
-			clicked_square.classList.add(current_player)
-			clicked_square.innerHTML = current_player
-			checkIfGameWon()
-			current_player = "0"
-		}
-	} else {
-		if (clicked_square.innerHTML == "") {
-			clicked_square.classList.add(current_player)
-			clicked_square.innerHTML = current_player
-			checkIfGameWon()
+	game_squares = game_squares + 1
+
+	clicked_square.classList.add(current_player)	
+	clicked_square.innerHTML = current_player
+
+	if (!checkIfGameWon()) {
+		if (current_player == "X") { 
+			current_player = "O"
+			clicked_square.classList.remove(current_player)	
+		} else {
 			current_player = "X"
+			clicked_square.classList.remove(current_player)	
 		}
 	}
 }
@@ -78,14 +76,14 @@ function checkIfGameWon() {
 				presentx = presentx + 1
 			}  
 
-			if (element_to_check == "0") {
+			if (element_to_check == "O") {
 				presento = presento + 1
 			}
 		} // each row has 3 elements
 
 		if (presentx == 3 || presento == 3 ) {
 			winMessage()
-			return
+			return true
 		}
 	} // only 3 rows are present
 
@@ -101,7 +99,7 @@ function checkIfGameWon() {
 				presentx = presentx + 1
 			}  
 
-			if (element_to_check == "0") {
+			if (element_to_check == "O") {
 				presento = presento + 1
 			}
 			start_value = start_value + 3
@@ -109,7 +107,7 @@ function checkIfGameWon() {
 
 		if (presentx == 3 || presento == 3 ) {
 			winMessage()
-			return
+			return true 
 		}
 	} // only 3 rows are present
 
@@ -118,13 +116,13 @@ function checkIfGameWon() {
 	if ( (document.getElementById(0).innerHTML == "X") && (middle_element == "X") && (document.getElementById(8).innerHTML == "X") || 
 			 (document.getElementById(2).innerHTML == "X") && (middle_element == "X") && (document.getElementById(6).innerHTML == "X") ) {
 		winMessage()
-		return
+		return true
 	}
 
-	if ( (document.getElementById(0).innerHTML == "0") && (middle_element == "0") && (document.getElementById(8).innerHTML == "0") || 
-		 	 (document.getElementById(2).innerHTML == "0") && (middle_element == "0") && (document.getElementById(6).innerHTML == "0") ) {
+	if ( (document.getElementById(0).innerHTML == "O") && (middle_element == "O") && (document.getElementById(8).innerHTML == "O") || 
+		 	 (document.getElementById(2).innerHTML == "O") && (middle_element == "O") && (document.getElementById(6).innerHTML == "O") ) {
 		winMessage()
-		return
+		return true
 	}
 
 	//handle game draw
@@ -150,6 +148,8 @@ function resetGame() {
   	var squares = document.getElementsByClassName("square")
 		for (var i = 0; i < squares.length; i++) {
 		   squares[i].innerHTML = ""
+		   squares[i].classList.remove("O")
+		   squares[i].classList.remove("X")  
 		}
 		var message_element = document.getElementById('status')
 		message_element.classList.remove("you-won")
